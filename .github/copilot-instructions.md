@@ -3,15 +3,17 @@
 ## Build and verification
 
 - Build from the repository root with `dotnet build .\WebNet.KvStoreLite.slnx -nologo`.
-- `dotnet test .\WebNet.KvStoreLite.slnx -nologo` currently restores and builds the solution, but there is no test project checked in yet.
+- Run the full test suite with `dotnet test .\WebNet.KvStoreLite.slnx -nologo`.
+- Run a single test with `dotnet test .\WebNet.KvStoreLite.Tests\WebNet.KvStoreLite.Tests.csproj -nologo --filter "FullyQualifiedName~TestName"`.
 
 ## High-level architecture
 
-- This repository is a single .NET 10 class library project, `WebNet.KvStoreLite`, packaged as a lightweight SQLite-backed key-value store.
+- This repository contains a .NET 10 class library project, `WebNet.KvStoreLite`, plus an xUnit test project, `WebNet.KvStoreLite.Tests`.
 - The public surface area is centered on two types: `KvStoreOptions`, which supplies `StoreName` and `BaseDirectory`, and `KvStore`, which turns those options into a database path named `<StoreName>.sqlitedb`.
 - Each logical collection is mapped directly to a SQLite table. `CreateCollection` creates tables on demand with a fixed schema of `k TEXT NOT NULL, v TEXT NOT NULL`.
 - `KvStore` keeps one `SqliteConnection` for the lifetime of the instance and reuses a mutable `SqliteCommand` field across operations instead of creating a fresh command per call.
 - The root `README.md` and `LICENSE.txt` are packed into the NuGet package through the project file, so packaging-related changes often span both the root files and `WebNet.KvStoreLite.csproj`.
+- Tests use shared sample data for a `users` collection and create isolated temporary SQLite directories per test instead of checking sample database files into the repository.
 
 ## Key conventions
 

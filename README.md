@@ -14,17 +14,24 @@ From the repository root:
 dotnet build .\WebNet.KvStoreLite.slnx -nologo
 ```
 
-There is currently no test project in the repository. Running `dotnet test` restores and builds the solution, but does not execute automated tests:
+Run the full test suite with:
 
 ```powershell
 dotnet test .\WebNet.KvStoreLite.slnx -nologo
 ```
 
+Run a single test with:
+
+```powershell
+dotnet test .\WebNet.KvStoreLite.Tests\WebNet.KvStoreLite.Tests.csproj -nologo --filter "FullyQualifiedName~GetValue_ReturnsValue_ForExistingSampleKey"
+```
+
 ## Package layout
 
-The solution contains one library project:
+The solution contains two projects:
 
 - `WebNet.KvStoreLite` - the SQLite-backed key/value store implementation
+- `WebNet.KvStoreLite.Tests` - xUnit tests covering the current public API behavior with reusable sample data
 
 ## Core API
 
@@ -84,3 +91,13 @@ var snapshot = store.GetCollection("users");
 
 - API comments live in `WebNet.KvStoreLite\KvStore.cs` and `WebNet.KvStoreLite\KvStoreOptions.cs`
 - Architecture notes live in `docs\architecture.md`
+
+## Tests
+
+The test project uses a small shared sample dataset:
+
+- collection: `users`
+- keys: `alice`, `bob`, `charlie`
+- values: `admin`, `reader`, `editor`
+
+Each test creates its own temporary SQLite database directory so runs stay isolated from one another.
